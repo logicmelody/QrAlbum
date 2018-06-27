@@ -41,22 +41,25 @@ class App extends Component {
 				// const code = jsQR(toByteArray(response.data), response.width, response.height);
 				// console.log('QR code = ' + code);
 
-				//const uri = response.origURL.slice(16);
-
-				console.log(response.uri);
-				console.log(response.origURL);
-				console.log(response.path);
-				console.log(encodeURI(response.path));
-
-				QRCode.decode(encodeURI(response.path), (error, result) => {
-					console.log(error);
-					console.log(result);
-
-					this.setState({
-						qrCodeLog: error ? 'There is no qr code' : result
-					});
-				})
+				this.decodeImage(response);
 			}
+		});
+	}
+	decodeImage(response) {
+		const uri = response.uri.slice(7);
+
+		console.log('uri = ' + response.uri);
+		console.log('origURL = ' + response.origURL);
+		console.log('origURL = ' + response.path);
+		console.log(uri);
+
+		QRCode.decode(uri, (error, result) => {
+			console.log(error);
+			console.log(result);
+
+			this.setState({
+				qrCodeLog: error ? 'There is no qr code' : result
+			});
 		});
 	}
 	render() {
