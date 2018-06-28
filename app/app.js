@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import { byteLength, toByteArray, fromByteArray } from 'base64-js';
-import jsQR from 'jsqr';
 import Button from './components/Button';
 
 const QRCode = require('@remobile/react-native-qrcode-local-image');
@@ -33,27 +31,19 @@ class App extends Component {
 					response.customButton
 				);
 			} else {
-				// console.log('Image width = ' + response.width);
-				// console.log('Image height = ' + response.height);
-				// console.log('ByteArray length = ' + byteLength(response.data));
-				// console.log('ByteArray data = ' + toByteArray(response.data));
-
-				// const code = jsQR(toByteArray(response.data), response.width, response.height);
-				// console.log('QR code = ' + code);
-
 				this.decodeImage(response);
 			}
 		});
 	}
 	decodeImage(response) {
-		const uri = response.uri.slice(7);
+		const imageUri = Platform.OS === 'ios' ? response.uri.slice(7) : response.path;
 
-		console.log('uri = ' + response.uri);
-		console.log('origURL = ' + response.origURL);
-		console.log('origURL = ' + response.path);
-		console.log(uri);
+		console.log('Response uri = ' + response.uri);
+		console.log('Response origURL = ' + response.origURL);
+		console.log('Response path = ' + response.path);
+		console.log('Image uri = ' + imageUri);
 
-		QRCode.decode(uri, (error, result) => {
+		QRCode.decode(imageUri, (error, result) => {
 			console.log(error);
 			console.log(result);
 
