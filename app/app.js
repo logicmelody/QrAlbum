@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, Platform } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import QRCode from '@remobile/react-native-qrcode-local-image';
+import URL from 'url-parse';
 import Button from './components/Button';
-
-const QRCode = require('@remobile/react-native-qrcode-local-image');
 
 class App extends Component {
 	constructor(props) {
@@ -36,7 +36,14 @@ class App extends Component {
 		});
 	}
 	decodeImage(response) {
-		const imageUri = Platform.OS === 'ios' ? response.uri.slice(7) : response.path;
+		if (response === null) {
+			return;
+		}
+
+		const imageUri = Platform.OS === 'ios' ?
+			new URL(response.uri).set('protocol', '').href : response.path;
+		// const url = new URL('https://github.com/foo/bar');
+		// url.set('protocol', '');
 
 		console.log('Response uri = ' + response.uri);
 		console.log('Response origURL = ' + response.origURL);
@@ -44,8 +51,8 @@ class App extends Component {
 		console.log('Image uri = ' + imageUri);
 
 		QRCode.decode(imageUri, (error, result) => {
-			console.log(error);
-			console.log(result);
+			console.log('decode error = ' + error);
+			console.log('decode result = ' + result);
 
 			this.setState({
 				qrCodeLog: error ? 'There is no qr code' : result

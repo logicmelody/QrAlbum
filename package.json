@@ -15,7 +15,8 @@
     "react-native": "0.55.4",
     "react-native-camera-kit": "^6.2.4",
     "react-native-image-picker": "^0.26.10",
-    "react-native-qr-decoder": "^1.0.7"
+    "react-native-qr-decoder": "^1.0.7",
+    "url-parse": "^1.4.1"
   },
   "devDependencies": {
     "babel-jest": "23.0.1",
