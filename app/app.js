@@ -3,6 +3,7 @@ import { View, Text, Platform } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import QRCode from '@remobile/react-native-qrcode-local-image';
 import URL from 'url-parse';
+import { PermissionsAndroid } from 'react-native';
 import Button from './components/Button';
 
 class App extends Component {
@@ -12,7 +13,36 @@ class App extends Component {
 			qrCodeLog: 'No image selected'
 		};
 	}
-	selectPhotoTapped() {
+	_selectPhotoTapped() {
+		if (Platform.OS === 'ios') {
+			this._showImagePicker();
+		} else {
+			this._requestPermissionForAndroid();
+		}
+	}
+	async _requestPermissionForAndroid() {
+		try {
+			//const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+			const granted = await PermissionsAndroid.requestMultiple(
+				[
+					PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+					PermissionsAndroid.PERMISSIONS.CAMERA
+				]);
+
+			console.log(granted);
+
+			if (granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED && 
+				granted['android.permission.CAMERA'] === PermissionsAndroid.RESULTS.GRANTED) {
+				console.log("Show image picker")
+				this._showImagePicker();
+			} else {
+			  	console.log("Show dialogs")
+			}
+		} catch (err) {
+			console.warn(err)
+		}
+	}
+	_showImagePicker() {
 		const options = {
 			mediaType: 'photo',
 			quality: 1.0,
@@ -31,11 +61,11 @@ class App extends Component {
 					response.customButton
 				);
 			} else {
-				this.decodeImage(response);
+				this._decodeImage(response);
 			}
 		});
 	}
-	decodeImage(response) {
+	_decodeImage(response) {
 		if (response === null) {
 			return;
 		}
@@ -62,7 +92,7 @@ class App extends Component {
 	render() {
 		return (
 			<View style={styles.containerStyle}>
-				<Button onPress={() => this.selectPhotoTapped()}>
+				<Button onPress={() => this._selectPhotoTapped()}>
 					Show Image Picker
 				</Button>
 				<Text>{this.state.qrCodeLog}</Text>
